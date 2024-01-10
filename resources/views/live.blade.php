@@ -3,10 +3,7 @@
         <div class="flex-grow relative">
             <!-- Embed your video here --> 
             <div class="absolute inset-0 flex justify-center items-center bg-black">
-                <video controls class="w-full h-full max-w-full max-h-full">
-                    <source src="https://cam.goldbudz.com/stream/hls/treez.m3u8" type="application/x-mpegURL" />
-                    Your browser does not support the video tag.
-                </video>
+                @include('components.stream')
             </div>
         
     

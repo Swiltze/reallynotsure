@@ -37,11 +37,16 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => false, 
-                'host' => '127.0.0.1',
+                'useTLS' => true, 
+                'host' => 'goldbudz.com',
                 'port' => 6001,
-                'scheme' => 'http'
-            ],
+                'scheme' => 'https',
+    		'ssl' => [
+        		'local_cert' => '/etc/letsencrypt/live/goldbudz.com/fullchain.pem',
+        		'local_pk' => '/etc/letsencrypt/live/goldbudz.com/privkey.pem',
+        		'verify_peer' => false
+    ]
+],
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
             ],

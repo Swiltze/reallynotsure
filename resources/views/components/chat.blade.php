@@ -67,7 +67,6 @@
     }
 </style>
 <script>
-
 function handleEnter(event) {
         // Check if the Enter key was pressed
         if (event.key === 'Enter') {
@@ -88,10 +87,9 @@ function handleEnter(event) {
         return;
     }
 
-    // replace "pogchamp" with the emote image    
-    message = message.replace(\PogChamp\g, '<img src="path_to_emote_image\PogChamp.png" alt="PogChamp">');
 
-    
+
+
 
     // Prepare the data to be sent in the request
     var data = new FormData();
@@ -107,20 +105,60 @@ function handleEnter(event) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Success:', data);
-        // Optionally, add the new message to the chat-messages list
-        // and clear the input field
-        var chatMessagesList = document.getElementById('chat-messages');
-        var newMessageItem = document.createElement('li');
-        newMessageItem.textContent = data.user.name + ': ' + data.message; // Adjust if your response data structure is different
-        chatMessagesList.appendChild(newMessageItem);
+        if (data.error) {
+            alert(data.error);
+        } else {
+            // Check if the message was a command
+            if (message.startsWith('/prune')) {
+                // Handle the prune command response
+                handlePruneResponse(data);
+            } else {
+                // Handle a regular message response
+                addMessageToChat(data);
+            }
+        }
         input.value = '';
     })
     .catch((error) => {
         console.error('Error:', error);
     });
 }
+    function handlePruneResponse(data) {
+    if (data.success) {
+        // If the prune was successful, clear the chat messages
+        var chatMessagesList = document.getElementById('chat-messages');
+        while (chatMessagesList.firstChild) {
+            chatMessagesList.removeChild(chatMessagesList.firstChild);
+        }
+        // Optionally, display a system message indicating messages were pruned
+        var systemMessage = 'Messages have been pruned by an admin.';
+        addSystemMessageToChat(systemMessage);
+    }
+}
+
+function addMessageToChat(data) {
+    var chatMessagesList = document.getElementById('chat-messages');
+    var newMessageItem = document.createElement('li');
+    newMessageItem.textContent = data.user.name + ': ' + data.message; // Adjust if your response data structure is different
+    chatMessagesList.appendChild(newMessageItem);
+    chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+}
+
+function addSystemMessageToChat(message) {
+    var chatMessagesList = document.getElementById('chat-messages');
+    var newMessageItem = document.createElement('li');
+    newMessageItem.textContent = message;
+    newMessageItem.style.color = 'red'; // Style the system message differently
+    chatMessagesList.appendChild(newMessageItem);
+    chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+}
 
 document.getElementById('chat-input').addEventListener('keydown', handleEnter);
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    var chatMessagesList = document.getElementById('chat-messages');
+    chatMessagesList.scrollTop = chatMessagesList.scrollHeight;
+});
+
 
 </script>

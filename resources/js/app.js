@@ -17,8 +17,8 @@ window.Echo = new Echo({
 Echo.channel('chat')
     .listen('.ChatMessageSent', (e) => {
         const chatMessages = document.getElementById('chat-messages');
-        const newMessage = document.createElement('li');
-        newMessage.innerText = `${e.username}: ${e.message}`;
+        const newMessage = document.createElement('div');
+        newMessage.innerHTML = `${e.username}: ${e.message}`;
         chatMessages.appendChild(newMessage);
     });
 

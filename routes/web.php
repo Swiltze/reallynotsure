@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 // Chat routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
-    route::post('/send-message', [ChatController::class, 'store']);
+    route::post('/send-message', [ChatController::class, 'store'])->middleware('auth');
     Route::post('/messages', [ChatController::class, 'postMessage'])->name('chat.postMessage');
     // ... other chat routes ...
 });
