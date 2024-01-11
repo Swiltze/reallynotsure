@@ -62,24 +62,32 @@ class ChatController extends Controller
         return response()->json(['error' => 'Command not recognized'], 422);
     }
 
-    private function handlePruneCommand($parts)
-    {
-        $count = $parts[1] ?? null;
+private function handlePruneCommand($parts)
+{
+    $count = $parts[1] ?? null;
+    $prunedCount = 0; // Variable to keep track of the number of messages pruned
 
-        if ($count === 'all') {
-            // Delete all messages
-            ChatMessage::query()->delete();
-        } elseif (is_numeric($count)) {
-            // Delete the last $count messages
-            $messages = ChatMessage::latest()->take($count)->pluck('id');
-            ChatMessage::destroy($messages);
-        } else {
-            // If the argument is not recognized, return an error
-            return response()->json(['error' => 'Invalid prune command'], 422);
-        }
-
-        // Broadcast an event or return a response to update the chat
-        // For simplicity, we're just returning a success message
-        return response()->json(['success' => 'Messages pruned']);
+    if ($count === 'all') {
+        // Count all messages before deleting
+        $prunedCount = ChatMessage::query()->count();
+        // Delete all messages
+        ChatMessage::query()->delete();
+    } elseif (is_numeric($count)) {
+        // Delete the last $count messages
+        $messages = ChatMessage::latest()->take($count)->pluck('id');
+        $prunedCount = $messages->count(); // Count the number of messages to be deleted
+        ChatMessage::destroy($messages);
+    } else {
+        // If the argument is not recognized, return an error
+        return response()->json(['error' => 'Invalid prune command'], 422);
     }
+
+    // Broadcast an event or return a response to update the chat
+    // Return the number of messages pruned in the response
+    return response()->json([
+        'success' => true,
+        'message' => 'Messages pruned',
+        'pruneCount' => $prunedCount // Include the count of pruned messages
+    ]);
+}
 }

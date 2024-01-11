@@ -1,25 +1,27 @@
-<style>
-.video-container {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+<video id="my-video" class="video-js" controls preload="auto" width="640" height="264">
+</video>
+
+<script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+
+<script>
+// Get username from URL 
+const username = window.location.pathname.split("/")[2]; 
+
+if(username) {
+
+  // Construct HLS stream URL
+  const hlsUrl = "https://goldbudz.com/stream/hls/" + username + ".m3u8";
+
+  // Initialize player
+  var player = videojs("my-video");
+  
+  // Set the source to the dynamic HLS stream
+  player.src({
+    src: hlsUrl,
+    type: "application/x-mpegURL"
+  });
+
+} else {
+  // Show error if no username
 }
-
-.video-js {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-</style>
-
-<div class="video-container">
-<video id="my-video" class="video-js vjs-default-skin vjs-fill" controls preload="auto" data-setup="{}">
-    <source src="https://cam.goldbudz.com/stream/hls/treez.m3u8" type="application/x-mpegURL" />
-  </video>
-</div>
-
-
-  <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+</script>

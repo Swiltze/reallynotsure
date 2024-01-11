@@ -123,18 +123,33 @@ function handleEnter(event) {
         console.error('Error:', error);
     });
 }
-    function handlePruneResponse(data) {
+
+
+function handlePruneResponse(data) {
     if (data.success) {
-        // If the prune was successful, clear the chat messages
         var chatMessagesList = document.getElementById('chat-messages');
-        while (chatMessagesList.firstChild) {
-            chatMessagesList.removeChild(chatMessagesList.firstChild);
+        
+        if (data.pruneAll) {
+            // If the pruneAll flag is true, remove all messages
+            while (chatMessagesList.firstChild) {
+                chatMessagesList.removeChild(chatMessagesList.firstChild);
+            }
+            addSystemMessageToChat("All messages have been deleted.");
+        } else if (typeof data.pruneCount === 'number') {
+            // Remove the specified number of messages from the end of the chat
+            for (let i = 0; i < data.pruneCount; i++) {
+                if (chatMessagesList.lastChild) {
+                    chatMessagesList.removeChild(chatMessagesList.lastChild);
+                }
+            }
+            // Display a system message indicating messages were pruned
+            var systemMessage = `Last ${data.pruneCount} messages have been pruned by an admin.`;
+            addSystemMessageToChat(systemMessage);
         }
-        // Optionally, display a system message indicating messages were pruned
-        var systemMessage = 'Messages have been pruned by an admin.';
-        addSystemMessageToChat(systemMessage);
     }
 }
+
+
 
 function addMessageToChat(data) {
     var chatMessagesList = document.getElementById('chat-messages');

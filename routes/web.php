@@ -2,6 +2,8 @@
 
 use App\Models\ChatMessage;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LiveStreamController;
+use App\Http\Controllers\StreamKeyController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +23,11 @@ Route::get('/', function () {
 });
 
 
+Route::get('/temp', function () {
+    return view('lmao');
+});
+
+
 Route::get('/dashboard', function () {
     // Retrieve chat messages, including user information
     $messages = ChatMessage::with('user')->get();
@@ -30,19 +37,27 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/live', function () {
+//Route::get('/live', function () {
     // Retrieve chat messages, including user information
-    $messages = ChatMessage::with('user')->get();
+//    $messages = ChatMessage::with('user')->get();
 
     // Pass the messages to the dashboard view
-    return view('live', ['messages' => $messages]);
-})->middleware(['auth', 'verified'])->name('live');
+//    return view('live', ['messages' => $messages]);
+//})->middleware(['auth', 'verified'])->name('live');
+
+Route::get('/live', [LiveStreamController::class, 'index'])->name('live.index');
+Route::get('/live/{name}', [LiveStreamController::class, 'show'])->name('live.show');
+
+Route::post('/stream-key/generate', [StreamKeyController::class, 'generate'])->middleware('auth');
+Route::post('/stream-key/reset', [StreamKeyController::class, 'reset'])->middleware('auth');
 
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::patch('/stream-key/reset', [StreamKeyController::class, 'reset'])->name('stream-key.reset');
+
 });
 
 // Chat routes

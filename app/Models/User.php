@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -41,7 +42,30 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+	'stream_key' => 'string',
     ];
+
+	protected static function booted ()
+	{	
+		static::created(function ($user) {
+			$user->generateStreamKey();
+		});
+	}
+
+
+	 public function generateStreamKey()
+    {
+        $this->stream_key = Str::random(20);
+        $this->save();
+    }
+
+    public function resetStreamKey()
+    {
+        $this->generateStreamKey();
+    }
+
+
+
 	const ROLE_USER = 'user';
 	const ROLE_MODERATOR = 'moderator';
     	const ROLE_ADMIN = 'admin';

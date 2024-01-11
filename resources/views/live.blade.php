@@ -3,7 +3,7 @@
         <div class="flex-grow relative">
             <!-- Embed your video here --> 
             <div class="absolute inset-0 flex justify-center items-center bg-black">
-                @include('components.stream')
+                @include('components.stream', ['username' => $username])
             </div>
         
     
